@@ -105,7 +105,25 @@ namespace CodeHalt
         /// <param name="e"></param>
         private void Window_Closed(object sender, EventArgs e)
         {
-            UpdateStatus("Closing CodeHalt...");
+            // The user has closed the window.  We need to wait for the threads to finish before we can exit.
+            log("Waiting for threads to finish...");
+            UpdateStatus("Waiting for threads to finish...");
+            try
+            {
+                // Wait for all the threads to finish.  We use Task.WaitAll() so that we can catch any exceptions that may happen.
+                Task.WaitAll();
+            }
+            catch (AggregateException ex)
+            {
+                foreach (Exception inner in ex.InnerExceptions)
+                {
+                    // If we catch an exception, log it.
+                    log("Exception: " + inner.Message);
+                }
+            }
+            // Log that the threads have finished
+            UpdateStatus("Exiting...");
+            log("Closing CodeHalt...");
             log("CodeHalt closed!");
             Environment.Exit(0);
         }
