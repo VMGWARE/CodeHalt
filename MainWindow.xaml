@@ -38,16 +38,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style TargetType="ProgressBar">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressBar">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="#46454F">
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
         <Style TargetType="StatusBar">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="Black"/>
