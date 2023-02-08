@@ -276,12 +276,9 @@ namespace CodeHalt
                 UpdateStatus("Adding processes to list...");
                 int c = 0;
                 int total = runningProcesses.Length;
-                int progress = 0;
                 foreach (Process runningProcess in runningProcesses)
                 {
                     c++;
-                    progress = (int)Math.Round((double)(100 * c) / total);
-                    UpdateProgressBar(progress);
                     if (processes.Contains(runningProcess.ProcessName.ToLower()))
                     {
                         UpdateStatus("Adding " + runningProcess.ProcessName + " to list...");
@@ -391,12 +388,9 @@ namespace CodeHalt
         {
             Task.Factory.StartNew(() =>
             {
-                UpdateProgressBar(0);
                 log("Opening path in explorer...");
-                UpdateProgressBar(50);
                 Process.Start("explorer.exe", path);
                 log("Opened path in explorer!");
-                UpdateProgressBar(100);
                 UpdateStatus("Opened '" + path + "' in explorer!");
             });
         }
@@ -491,14 +485,15 @@ namespace CodeHalt
             });
             this.Dispatcher.Invoke(terminateProcessesSelected, DispatcherPriority.Background);
         }
-
-        private void UpdateProgressBar(int value = 0, Visibility visibility = Visibility.Visible)
+        private void ActiveMode(object sender, RoutedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                ProgressBar.Value = value;
-                ProgressBar.Visibility = visibility;
-            });
+            log("Switched to active mode!");
+
+        }
+        private void PassiveMode(object sender, RoutedEventArgs e)
+        {
+            log("Switched to passive mode!");
+
         }
     }
 }

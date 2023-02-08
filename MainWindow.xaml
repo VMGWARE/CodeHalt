@@ -15,6 +15,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#FFA500" />
+                                <Setter Property="Cursor" Value="Hand" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#FFA500" />
@@ -42,15 +43,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="#46454F">
-                            <Border x:Name="border2" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="#FFA500">
-                                <Rectangle x:Name="rectangle" Fill="#FFA500" />
-                            </Border>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsIndeterminate" Value="True">
-                                <Setter TargetName="rectangle" Property="Fill" Value="#FFA500" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -59,6 +52,49 @@
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="BorderBrush" Value="Black"/>
+        </Style>
+        <Style TargetType="StatusBarItem">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="White">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="White">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
     <Grid>
@@ -80,34 +116,26 @@
         <Button Grid.Row="0" Margin="10,280,10,0" Content="Terminate Selected" Grid.Column="1" Click="TerminateSelectedProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
         <Button Grid.Row="0" Margin="10,335,10,0" Content="Terminate All" Grid.Column="1" Click="StopProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Background="LightGray">
-            <!-- <TextBlock x:Name="StatusLabel" Text="Ready!" Height="18" /> -->
-
-            <!-- Add Grid, with two columns and 1 row. In the left coloyumb ins the label, the right one is a progress bar, give then the same width -->
-            <!--<Grid Width="800">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="530*" />
-                    <ColumnDefinition Width="271*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <TextBlock x:Name="StatusLabel" Text="Ready!" Grid.Column="0" Grid.ColumnSpan="1" />
-                <ProgressBar x:Name="ProgressBar" Grid.Column="1" Grid.ColumnSpan="1" Margin="10,0,13,0" />
-            </Grid>-->
-
             <Grid Width="797">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
                 <TextBlock x:Name="StatusLabel" Text="Ready!" Height="18" Grid.Column="0" Grid.ColumnSpan="1" Margin="0,0,0,0" />
-                <ProgressBar Minimum="0" Maximum="100" x:Name="ProgressBar" Grid.ColumnSpan="2" Margin="531,0,25,0" Value="0" Visibility="Hidden"/>
             </Grid>
 
         </StatusBar>
+        <GroupBox Header="Modes" Margin="10,109,10,205" Grid.Column="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <RadioButton x:Name="PassiveModeRadioButton" Content="Passive" Grid.Column="0" Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="PassiveMode" IsChecked="True" />
+                <RadioButton x:Name="ActiveModeRadioButton" Content="Active" Grid.Column="1" Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="ActiveMode" />
+            </Grid>
+        </GroupBox>
     </Grid>
-
 </Window>
