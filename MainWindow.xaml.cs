@@ -56,15 +56,24 @@ namespace CodeHalt
             log("CodeHalt pre-UI load complete!");
         }
 
+        /// <summary>
+        /// It checks if the shortcut exists, if it doesn't, it creates it
+        /// </summary>
+        /// <returns>
+        /// The method is returning a boolean value.
+        /// </returns>
         private bool AddToStartMenu()
         {
             // Check if the shortcut already exists
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs\CodeHalt.lnk"))
             {
+                // If the shortcut exists, then log that it exists and return true
                 log("Shortcut already exists!");
                 return true;
             }
 
+            // Log that the shortcut doesn't exist
+            log("Shortcut doesn't exist, creating it...");
             object shStartMenu = (object)"StartMenu";
             WshShell shell = new WshShell();
             string shortcutAddress = (string)shell.SpecialFolders.Item(ref shStartMenu) + @"\Programs\CodeHalt.lnk";
@@ -77,11 +86,13 @@ namespace CodeHalt
             // Check if the shortcut was created
             if (File.Exists(shortcutAddress))
             {
+                // If the shortcut was created, then log that it was created and return true
                 log("Shortcut created!");
                 return true;
             }
             else
             {
+                // If the shortcut wasn't created, then log that it failed and return false
                 log("Shortcut creation failed!", true, true, 2);
                 return false;
             }
