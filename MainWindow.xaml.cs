@@ -58,7 +58,7 @@ namespace CodeHalt
                         // Add CodeHalt to the start menu
                         AddToStartMenu();
                         // Log that CodeHalt UI load is complete
-                        log("CodeHalt pre-UI load complete!");
+                        log("CodeHalt pre-UI load complete!", level: 5);
                     });
         }
 
@@ -130,7 +130,7 @@ namespace CodeHalt
             // Log that the threads have finished
             UpdateStatus("Exiting...");
             log("Closing CodeHalt...");
-            log("CodeHalt closed!");
+            log("CodeHalt closed!", level: 5);
             Environment.Exit(0);
         }
 
@@ -140,7 +140,7 @@ namespace CodeHalt
         /// <param name="message">The message to log</param>
         /// <param name="newLine">If true, adds a new line to the end of the message.</param>
         /// <param name="timestamp">If true, it will add a timestamp to the log.</param>
-        /// <param name="level">0 = info, 1 = warning, 2 = error</param>
+        /// <param name="level">0 = info, 1 = warning, 2 = error, 3 = debug, 4 = verbose, 5 = status</param>
         private void log(string message, bool newLine = true, bool timestamp = true, int level = 0)
         {
             Action logToFile = new Action(() =>
@@ -170,6 +170,15 @@ namespace CodeHalt
                             break;
                         case 2:
                             file.Write("[ERROR] ");
+                            break;
+                        case 3:
+                            file.Write("[DEBUG] ");
+                            break;
+                        case 4:
+                            file.Write("[FATAL] ");
+                            break;
+                        case 5:
+                            file.Write("[STATUS] ");
                             break;
                     }
                     file.Write(message);
@@ -238,28 +247,38 @@ namespace CodeHalt
                     log("Generating processes file...");
                     // Update the status label
                     UpdateStatus("Generating processes file...");
-                    // Create a string array that contains all the processes you want to kill
-                    string[] processes = { "code", "chrome", "firefox", "node", "sublime_text", "devenv", "laragon" };
-                    // Create the directory for the processes.txt file
-                    System.IO.Directory.CreateDirectory(path);
-                    // Create a new StreamWriter object to write to the processes.txt file
-                    using StreamWriter file = new(path + "processes.txt");
-                    // Log to the console that we're writing to the processes.txt file
-                    UpdateStatus("Writing processes to file...");
-                    // Loop through all the processes in the processes array
-                    foreach (string process in processes)
+                    try
                     {
-                        // Log to the console what process we're writing to the file
-                        log("Writing " + process + " to file...");
+                        // Create a string array that contains all the processes you want to kill
+                        string[] processes = { "code", "chrome", "firefox", "node", "sublime_text", "devenv", "laragon" };
+                        // Create the directory for the processes.txt file
+                        System.IO.Directory.CreateDirectory(path);
+                        // Create a new StreamWriter object to write to the processes.txt file
+                        using StreamWriter file = new(path + "processes.txt");
+                        // Log to the console that we're writing to the processes.txt file
+                        UpdateStatus("Writing processes to file...");
+                        // Loop through all the processes in the processes array
+                        foreach (string process in processes)
+                        {
+                            // Log to the console what process we're writing to the file
+                            log("Writing " + process + " to file...");
+                            // Update the status label
+                            UpdateStatus("Writing " + process + " to file...");
+                            // Write the process name to the processes.txt file
+                            file.WriteLine(process);
+                        }
+                        // Log to the console that we've written to the processes.txt file
+                        log("Created processes file!");
                         // Update the status label
-                        UpdateStatus("Writing " + process + " to file...");
-                        // Write the process name to the processes.txt file
-                        file.WriteLine(process);
+                        UpdateStatus("Generated processes file!");
                     }
-                    // Log to the console that we've written to the processes.txt file
-                    log("Created processes file!");
-                    // Update the status label
-                    UpdateStatus("Generated processes file!");
+                    catch (Exception e)
+                    {
+                        // Log the error to the console
+                        log("Error: " + e, level: 2);
+                        // Update the status label
+                        UpdateStatus("Error: " + e);
+                    }
                 }
             });
         }
@@ -309,7 +328,7 @@ namespace CodeHalt
                 if (ProcessList.Items.Count == 0)
                 {
                     UpdateStatus("No processes found!");
-                    log("No processes found!");
+                    log("No processes found!", level: 1);
                 }
                 else
                 {
@@ -371,7 +390,7 @@ namespace CodeHalt
                         {
                             failedProcesses++;
                             log("Failed to stop '" + runningProcess.ProcessName + "'!", level: 2);
-                            UpdateStatus("Failed to stop '" + runningProcess.ProcessName + "'!");
+                            UpdateStatus("Failed to stop '" + runningProcess.ProcessName + "'!", level: 1);
                         }
                         ProcessList.Items.Remove(processName);
                     }
@@ -443,7 +462,7 @@ namespace CodeHalt
                 var selectedProcesses = ProcessList.SelectedItems;
                 if (selectedProcesses.Count == 0)
                 {
-                    log("No processes selected!");
+                    log("No processes selected!", level: 1);
                     UpdateStatus("No processes selected!");
                     return;
                 }
@@ -459,13 +478,13 @@ namespace CodeHalt
                     catch (FormatException ex)
                     {
                         UpdateStatus("Failed to parse process ID from string: " + ex.Message);
-                        log("Failed to parse process ID from string: " + ex.Message);
+                        log("Failed to parse process ID from string: " + ex.Message, level: 1);
                         continue;
                     }
                     catch (Exception ex)
                     {
                         UpdateStatus("Failed to get process ID from string: " + ex.Message);
-                        log("Failed to get process ID from string: " + ex.Message);
+                        log("Failed to get process ID from string: " + ex.Message, level: 1);
                         continue;
                     }
                     UpdateStatus("Stopping process " + processId + "...");
@@ -474,13 +493,13 @@ namespace CodeHalt
                     if (process == null)
                     {
                         UpdateStatus("Process " + processId + " does not exist!");
-                        log("Process " + processId + " does not exist!");
+                        log("Process " + processId + " does not exist!", level: 1);
                         continue;
                     }
                     else
                     {
                         try { process.Kill(); log("Stopped process " + processId + "!"); terminated++; }
-                        catch (Exception ex) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!"); }
+                        catch (Exception ex) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!", level: 1); }
                     }
                 }
                 if (terminated == 1)
