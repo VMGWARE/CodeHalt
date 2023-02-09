@@ -46,13 +46,20 @@ Run CodeHalt.exe either as an administrator or as a normal user. If you run it a
 * Termintate Selected - Terminate the selected process
 * Terminate All - Terminate all processes that are marked to be managed by CodeHalt
 
+## TODO
+
+* [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
+* [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
+* [ ] Add backend support for the modes (Passive and Active)
+* [ ] Fix the bug where the program will crash if the target process is not found or if the process is already terminated
+
 ## Help
 
 If you need help, you can either open an issue on the GitHub page or you can join the Discord server [https://discord.gg/xhnmM4zgmu](https://discord.gg/xhnmM4zgmu).
 
 ## License
 
-Distributed under the `CC BY-NC-SA 4.0` License. See [LICENSE](LICENSE) for more information.
+Distributed under the `CC BY-NC-SA 4.0` License. See [LICENSE](LICENSE.md) for more information.
 
 ## Contributors
 
