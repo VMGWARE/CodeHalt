@@ -9,7 +9,7 @@
 
 ## Description
 
-CodeHalt is a simple process manager that allows you to manage processes that are running in the background and top some or all of them. It is designed to be simple and easy to use. It is also designed to be as lightweight as possible.
+CodeHalt is a simple process manager that allows you to manage processes that are running in the background and stop some or all of them. It is designed to be simple and easy to use. It is also designed to be as lightweight as possible.
 
 ## Getting Started
 
