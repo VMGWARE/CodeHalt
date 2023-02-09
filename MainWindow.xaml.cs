@@ -390,7 +390,7 @@ namespace CodeHalt
                         {
                             failedProcesses++;
                             log("Failed to stop '" + runningProcess.ProcessName + "'!", level: 2);
-                            UpdateStatus("Failed to stop '" + runningProcess.ProcessName + "'!", level: 1);
+                            UpdateStatus("Failed to stop '" + runningProcess.ProcessName + "'!");
                         }
                         ProcessList.Items.Remove(processName);
                     }
