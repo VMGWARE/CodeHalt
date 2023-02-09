@@ -488,12 +488,10 @@ namespace CodeHalt
         private void ActiveMode(object sender, RoutedEventArgs e)
         {
             log("Switched to active mode!");
-
         }
         private void PassiveMode(object sender, RoutedEventArgs e)
         {
             log("Switched to passive mode!");
-
         }
     }
 }

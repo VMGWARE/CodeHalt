@@ -96,13 +96,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <!-- List Box of processes -->
         <ListBox x:Name="ProcessList" Grid.Column="0" Grid.Row="0" BorderBrush="Black" Foreground="#FFA500" Background="White" SelectionMode="Extended" BorderThickness="1" Margin="10,10,10,10" FontSize="14"/>
-        <!-- Set listbox text color -->
-        <!-- Controls -->
         <Button Grid.Column="1" Grid.Row="0" Margin="10,10,10,0" Content="Scan Processes" Background="#FFA500" Click="ScanProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
-        <Button Grid.Column="1" Grid.Row="0" Margin="10,60,10,0" Content="Open in Explorer" VerticalAlignment="Top" Height="44" Click="OpenInExplorer" Background="#32CD32" FontSize="14" />
+        <Button Grid.Column="1" Grid.Row="0" Margin="10,60,10,0" Content="Open In Explorer" VerticalAlignment="Top" Height="44" Click="OpenInExplorer" Background="#32CD32" FontSize="14" />
         <Button Grid.Row="0" Margin="10,280,10,0" Content="Terminate Selected" Grid.Column="1" Click="TerminateSelectedProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
         <Button Grid.Row="0" Margin="10,335,10,0" Content="Terminate All" Grid.Column="1" Click="StopProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Background="LightGray">
@@ -112,7 +108,6 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="StatusLabel" Text="Ready!" Height="18" Grid.Column="0" Grid.ColumnSpan="1" Margin="0,0,0,0" />
             </Grid>
-
         </StatusBar>
         <GroupBox Header="Modes" Margin="10,109,10,205" Grid.Column="1">
             <Grid>
