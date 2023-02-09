@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
-using Microsoft.Toolkit.Uwp.Notifications;
+//using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Threading;
-using System.Threading;
 using IWshRuntimeLibrary;
 using File = System.IO.File;
 
@@ -52,8 +41,8 @@ namespace CodeHalt
                         GenerateProccessFile();
                         ScanProcesses(null, null);
                         AddToStartMenu();
+                        log("CodeHalt pre-UI load complete!");
                     });
-            log("CodeHalt pre-UI load complete!");
         }
 
         /// <summary>
@@ -205,11 +194,13 @@ namespace CodeHalt
 
         private bool IsFileLocked(Stream baseStream)
         {
+            // If we can read the next byte, the stream is not closed 
             try
             {
                 baseStream.ReadByte();
                 return false;
             }
+            // If we can't read the next byte, the stream is closed 
             catch (IOException)
             {
                 return true;
@@ -223,21 +214,34 @@ namespace CodeHalt
         {
             Task.Factory.StartNew(() =>
             {
+                // If the processes.txt file doesn't exist, create it
                 if (!System.IO.File.Exists(path + "processes.txt"))
                 {
+                    // Log to the console what we're doing
                     log("Generating processes file...");
+                    // Update the status label
                     UpdateStatus("Generating processes file...");
+                    // Create a string array that contains all the processes you want to kill
                     string[] processes = { "code", "chrome", "firefox", "node", "sublime_text", "devenv", "laragon" };
+                    // Create the directory for the processes.txt file
                     System.IO.Directory.CreateDirectory(path);
+                    // Create a new StreamWriter object to write to the processes.txt file
                     using StreamWriter file = new(path + "processes.txt");
+                    // Log to the console that we're writing to the processes.txt file
                     UpdateStatus("Writing processes to file...");
+                    // Loop through all the processes in the processes array
                     foreach (string process in processes)
                     {
+                        // Log to the console what process we're writing to the file
                         log("Writing " + process + " to file...");
+                        // Update the status label
                         UpdateStatus("Writing " + process + " to file...");
+                        // Write the process name to the processes.txt file
                         file.WriteLine(process);
                     }
+                    // Log to the console that we've written to the processes.txt file
                     log("Created processes file!");
+                    // Update the status label
                     UpdateStatus("Generated processes file!");
                 }
             });
@@ -344,6 +348,7 @@ namespace CodeHalt
                         try
                         {
                             runningProcess.Kill();
+                            log("Stopped '" + runningProcess.ProcessName + "'!");
                         }
                         catch (Exception ex)
                         {
