@@ -18,29 +18,46 @@ namespace CodeHalt
         int isAdministrator = 0;
         public MainWindow()
         {
-            InitializeComponent();
+            // CodeHalt started
             log("CodeHalt started!");
+            // If another instance of CodeHalt is already running...
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
+                // Log this error
                 log("Another instance of CodeHalt is already running!", true, true, 2);
+                // Display an error message
                 MessageBox.Show("Another instance of CodeHalt is already running!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Exit the process
                 Environment.Exit(0);
             }
+            // If CodeHalt doesn't have admin rights...
             if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
+                // Log this error
                 log("CodeHalt does not have admin rights!", true, true, 1);
             }
+            // If CodeHalt has admin rights...
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
+                // Log that CodeHalt has admin rights
                 log("CodeHalt has admin rights!");
+                // Change the title of the window to include "(Administator)"
                 this.Title = "CodeHalt (Administator)";
+                // Set isAdministrator to 1
                 isAdministrator = 1;
             }
+            // Initialize the UI
+            InitializeComponent();
+            // Start a new thread
             Task.Factory.StartNew(() =>
                     {
+                        // Generate a file containing all processes to be tracked
                         GenerateProccessFile();
+                        // Scan the processes
                         ScanProcesses(null, null);
+                        // Add CodeHalt to the start menu
                         AddToStartMenu();
+                        // Log that CodeHalt UI load is complete
                         log("CodeHalt pre-UI load complete!");
                     });
         }
@@ -339,7 +356,6 @@ namespace CodeHalt
                 UpdateStatus("Stopping processes...");
                 foreach (Process runningProcess in runningProcesses)
                 {
-                    currentProcess++;
                     if (processes.Contains(runningProcess.ProcessName.ToLower()))
                     {
                         log("Stopping " + runningProcess.ProcessName + "...");
@@ -349,6 +365,7 @@ namespace CodeHalt
                         {
                             runningProcess.Kill();
                             log("Stopped '" + runningProcess.ProcessName + "'!");
+                            currentProcess++;
                         }
                         catch (Exception ex)
                         {
@@ -431,6 +448,7 @@ namespace CodeHalt
                     return;
                 }
                 log("Terminating " + selectedProcesses.Count + " processes...");
+                int terminated = 0;
                 foreach (var selectedProcess in selectedProcesses)
                 {
                     int processId;
@@ -461,19 +479,24 @@ namespace CodeHalt
                     }
                     else
                     {
-                        try { process.Kill(); log("Stopped process " + processId + "!"); }
+                        try { process.Kill(); log("Stopped process " + processId + "!"); terminated++; }
                         catch (Exception ex) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!"); }
                     }
                 }
-                if (selectedProcesses.Count == 1)
+                if (terminated == 1)
                 {
-                    UpdateStatus("Stopped " + selectedProcesses.Count + " process!");
-                    log("Stopped " + selectedProcesses.Count + " process!");
+                    UpdateStatus("Stopped " + terminated + " process!");
+                    log("Stopped " + terminated + " process!");
+                }
+                if (terminated == 0)
+                {
+                    UpdateStatus("Stopped " + terminated + " processes!");
+                    log("Stopped " + terminated + " processes!");
                 }
                 else
                 {
-                    UpdateStatus("Stopped " + selectedProcesses.Count + " processes!");
-                    log("Stopped " + selectedProcesses.Count + " processes!");
+                    UpdateStatus("Stopped " + terminated + " processes!");
+                    log("Stopped " + terminated + " processes!");
                 }
                 ProcessList.Items.Clear();
                 string[] processes = System.IO.File.ReadAllLines(path + "processes.txt");
