@@ -8,7 +8,7 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>CodeHalt.ico</ApplicationIcon>
-    <Version>0.1.3</Version>
+    <Version>0.1.5</Version>
     <Company>Vahn Gomes</Company>
     <Copyright>Vahn Gomes 2023</Copyright>
     <Product>CodeHalt</Product>
@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <Content Include="CodeHalt.ico" />
-    <Content Include="CodeHalt.png" />
   </ItemGroup>
 
   <ItemGroup>

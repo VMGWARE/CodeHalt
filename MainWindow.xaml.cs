@@ -42,7 +42,7 @@ namespace CodeHalt
                 // Log that CodeHalt has admin rights
                 log("CodeHalt has admin rights!");
                 // Change the title of the window to include "(Administator)"
-                this.Title = "CodeHalt (Administator)";
+                this.Title = $"CodeHalt  (Administator)";
                 // Set isAdministrator to 1
                 isAdministrator = 1;
             }
@@ -50,16 +50,16 @@ namespace CodeHalt
             InitializeComponent();
             // Start a new thread
             Task.Factory.StartNew(() =>
-                    {
-                        // Generate a file containing all processes to be tracked
-                        GenerateProccessFile();
-                        // Scan the processes
-                        ScanProcesses(null, null);
-                        // Add CodeHalt to the start menu
-                        AddToStartMenu();
-                        // Log that CodeHalt UI load is complete
-                        log("CodeHalt pre-UI load complete!", level: 5);
-                    });
+                        {
+                            // Generate a file containing all processes to be tracked
+                            GenerateProccessFile();
+                            // Scan the processes
+                            ScanProcesses(null, null);
+                            // Add CodeHalt to the start menu
+                            AddToStartMenu();
+                            // Log that CodeHalt UI load is complete
+                            log("CodeHalt pre-UI load complete!", level: 5);
+                        });
         }
 
         /// <summary>
@@ -101,6 +101,23 @@ namespace CodeHalt
                 // If the shortcut wasn't created, then log that it failed and return false
                 log("Shortcut creation failed!", true, true, 2);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns the current version of CodeHalt
+        /// </summary>
+        public string CurrentVersion
+        {
+            get
+            {
+                // Check if the program is running in 32-bit mode
+                if (Environment.Is64BitProcess == false)
+                {
+                    // If the program is running in 32-bit mode, return the 32-bit version
+                    return "v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "-x86";
+                }
+                return "v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "-x64";
             }
         }
 
@@ -386,7 +403,7 @@ namespace CodeHalt
                             log("Stopped '" + runningProcess.ProcessName + "'!");
                             currentProcess++;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             failedProcesses++;
                             log("Failed to stop '" + runningProcess.ProcessName + "'!", level: 2);
@@ -499,7 +516,7 @@ namespace CodeHalt
                     else
                     {
                         try { process.Kill(); log("Stopped process " + processId + "!"); terminated++; }
-                        catch (Exception ex) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!", level: 1); }
+                        catch (Exception) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!", level: 1); }
                     }
                 }
                 if (terminated == 1)

@@ -104,9 +104,12 @@
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Background="LightGray">
             <Grid Width="797">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="StatusLabel" Text="Ready!" Height="18" Grid.Column="0" Grid.ColumnSpan="1" Margin="0,0,0,0" />
+                <!-- Add textblock for version using binding -->
+                <TextBlock x:Name="VersionLabel" Text="{Binding CurrentVersion, Mode=OneTime, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Height="18" Grid.Column="1" Grid.ColumnSpan="1" Margin="0,0,0,0" HorizontalAlignment="Center" />
             </Grid>
         </StatusBar>
         <GroupBox Header="Modes" Margin="10,109,10,205" Grid.Column="1">
