@@ -1,13 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using IWshRuntimeLibrary;
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
 //using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Threading;
-using IWshRuntimeLibrary;
 using File = System.IO.File;
 
 namespace CodeHalt
@@ -16,6 +18,7 @@ namespace CodeHalt
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CodeHalt\\";
         int isAdministrator = 0;
+        BackgroundWorker worker = new BackgroundWorker();
         public MainWindow()
         {
             // CodeHalt started
@@ -41,8 +44,8 @@ namespace CodeHalt
             {
                 // Log that CodeHalt has admin rights
                 log("CodeHalt has admin rights!");
-                // Change the title of the window to include "(Administator)"
-                this.Title = $"CodeHalt  (Administator)";
+                // Change the title of the window to include "(Administrator)"
+                this.Title = "CodeHalt  (Administrator)";
                 // Set isAdministrator to 1
                 isAdministrator = 1;
             }
@@ -52,7 +55,7 @@ namespace CodeHalt
             Task.Factory.StartNew(() =>
                         {
                             // Generate a file containing all processes to be tracked
-                            GenerateProccessFile();
+                            GenerateProcessFile();
                             // Scan the processes
                             ScanProcesses(null, null);
                             // Add CodeHalt to the start menu
@@ -143,6 +146,25 @@ namespace CodeHalt
                     // If we catch an exception, log it.
                     log("Exception: " + inner.Message);
                 }
+            }
+            if (worker.IsBusy == true)
+            {
+                log("Background worker is busy");
+            }
+            int tries = 0;
+            while (worker.IsBusy)
+            {
+                StopBackgroundWorker();
+                if (tries > 10)
+                {
+                    log("Background worker is still busy after 10 tries, exiting anyway");
+                    break;
+                }
+                tries++;
+            }
+            if (worker.IsBusy == false)
+            {
+                log("Background worker is not busy");
             }
             // Log that the threads have finished
             UpdateStatus("Exiting...");
@@ -235,6 +257,9 @@ namespace CodeHalt
             this.Dispatcher.Invoke(logToFile, DispatcherPriority.Background);
         }
 
+        /// <summary>
+        /// Checks if a file is locked
+        /// </summary> 
         private bool IsFileLocked(Stream baseStream)
         {
             // If we can read the next byte, the stream is not closed 
@@ -251,9 +276,9 @@ namespace CodeHalt
         }
 
         /// <summary>
-        /// It creates a file called processes.txt in the appdata folder if it doesn't exist
+        /// It creates a file called processes.txt in the app data folder if it doesn't exist
         /// </summary>
-        private void GenerateProccessFile()
+        private void GenerateProcessFile()
         {
             Task.Factory.StartNew(() =>
             {
@@ -310,7 +335,7 @@ namespace CodeHalt
             Dispatcher.Invoke(() =>
             {
                 // Have it show the loading animation in the navbar where the search bar is
-                this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administator)" : "") + " - Scanning...";
+                this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administrator)" : "") + " - Scanning...";
                 log("Scanning processes...");
                 UpdateStatus("Scanning processes...");
 
@@ -352,7 +377,7 @@ namespace CodeHalt
                     UpdateStatus("Found " + ProcessList.Items.Count + " processes!");
                     log("Found " + ProcessList.Items.Count + " processes!");
                 }
-                this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administator)" : "");
+                this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administrator)" : "");
 
             });
 
@@ -444,13 +469,22 @@ namespace CodeHalt
         /// <param name="RoutedEventArgs">The event arguments.</param>
         private void OpenInExplorer(object sender, RoutedEventArgs e)
         {
-            Task.Factory.StartNew(() =>
+            Action openpath = new Action(() =>
             {
-                log("Opening path in explorer...");
-                Process.Start("explorer.exe", path);
-                log("Opened path in explorer!");
-                UpdateStatus("Opened '" + path + "' in explorer!");
+                try
+                {
+                    log("Opening path in explorer...");
+                    Process.Start("explorer.exe", path);
+                    log("Opened path in explorer!");
+                    UpdateStatus("Opened '" + path + "' in explorer!");
+                }
+                catch (Exception ex)
+                {
+                    log("Failed to open path in explorer: " + ex.Message, level: 2);
+                    UpdateStatus("Failed to open '" + path + "' in explorer!");
+                }
             });
+            this.Dispatcher.Invoke(openpath, DispatcherPriority.Background);
         }
 
         /// <summary>
@@ -549,13 +583,89 @@ namespace CodeHalt
             });
             this.Dispatcher.Invoke(terminateProcessesSelected, DispatcherPriority.Background);
         }
+
+        /// <summary>
+        /// It starts the background worker
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="RoutedEventArgs">The event data.</param>
         private void ActiveMode(object sender, RoutedEventArgs e)
         {
             log("Switched to active mode!");
+            // Start the background worker
+            StartBackgroundWorker();
+            log("Started background worker!");
         }
+
+        /// <summary>
+        /// It stops the background worker
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="RoutedEventArgs">The event data.</param>
         private void PassiveMode(object sender, RoutedEventArgs e)
         {
             log("Switched to passive mode!");
+            // Stop the background worker
+            StopBackgroundWorker();
+            log("Stopped background worker!");
+        }
+
+        /// <summary>
+        /// It starts a background worker that runs the function BackgroundWorker_DoWork() in the
+        /// background
+        /// </summary>
+        private void StartBackgroundWorker()
+        {
+            worker.DoWork += new DoWorkEventHandler(BackgroundWorker_DoWork);
+            worker.WorkerSupportsCancellation = true;
+            worker.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// It stops the background worker
+        /// </summary>
+        private void StopBackgroundWorker()
+        {
+            // Check if the background worker is running
+            if (worker.IsBusy)
+            {
+                // Cancel the background worker
+                worker.CancelAsync();
+            }
+        }
+
+        /// <summary>
+        /// It reads a text file, checks if any of the processes in the text file are running, and if
+        /// they are, it kills them
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="DoWorkEventArgs">The event arguments for the DoWork event.</param>
+        private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Boolean run = true;
+            while (run)
+            {
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    run = false;
+                    break;
+                }
+                string[] processes = System.IO.File.ReadAllLines(path + "processes.txt");
+                Process[] runningProcesses = Process.GetProcesses();
+                for (int i = 0; i < processes.Length; i++) { processes[i] = processes[i].ToLower(); }
+                foreach (Process runningProcess in runningProcesses)
+                {
+                    if (processes.Contains(runningProcess.ProcessName.ToLower()))
+                    {
+                        log("Stopping process " + runningProcess.Id + "...");
+                        UpdateStatus("Stopping process " + runningProcess.Id + "...");
+                        try { runningProcess.Kill(); log("Stopped process " + runningProcess.Id + "!"); UpdateStatus("Stopped process " + runningProcess.Id + "!"); }
+                        catch (Exception) { UpdateStatus("Failed to stop process " + runningProcess.Id + "!"); log("Failed to stop process " + runningProcess.Id + "!", level: 1); }
+                    }
+                }
+                Thread.Sleep(10000);
+            }
         }
     }
 }
