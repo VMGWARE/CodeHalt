@@ -49,6 +49,8 @@ namespace CodeHalt
                 // Set isAdministrator to 1
                 isAdministrator = 1;
             }
+            // Make the required folder if it doesn't exist
+            MakeRequiredFolder();
             // Initialize the UI
             InitializeComponent();
             // Start a new thread
@@ -104,6 +106,23 @@ namespace CodeHalt
                 // If the shortcut wasn't created, then log that it failed and return false
                 log("Shortcut creation failed!", true, true, 2);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// The function creates a folder and a file if they do not already exist.
+        /// </summary>
+        public void MakeRequiredFolder()
+        {
+            // Check if the folder exists
+            if (!Directory.Exists(path))
+            {
+                // If the folder doesn't exist, then log that it doesn't exist
+                log("Folder doesn't exist, creating it...");
+                // Create the folder
+                Directory.CreateDirectory(path);
+                // Log that the folder was created
+                log("Folder created!");
             }
         }
 
@@ -170,6 +189,17 @@ namespace CodeHalt
             UpdateStatus("Exiting...");
             log("Closing CodeHalt...");
             log("CodeHalt closed!", level: 5);
+            Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Catch any unhandled exceptions and log them
+        /// </summary>
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            log("Unhandled exception: " + e.Exception.Message, true, true, 2);
+            log("Stack trace: " + e.Exception.StackTrace, true, true, 2);
+            log("CodeHalt crashed!", level: 2);
             Environment.Exit(0);
         }
 
@@ -280,49 +310,49 @@ namespace CodeHalt
         /// </summary>
         private void GenerateProcessFile()
         {
-            Task.Factory.StartNew(() =>
+            // If the processes.txt file doesn't exist, create it
+            if (!System.IO.File.Exists(path + "processes.txt"))
             {
-                // If the processes.txt file doesn't exist, create it
-                if (!System.IO.File.Exists(path + "processes.txt"))
+                // Log to the console what we're doing
+                log("Generating processes file...");
+                // Update the status label
+                UpdateStatus("Generating processes file...");
+                try
                 {
-                    // Log to the console what we're doing
-                    log("Generating processes file...");
+                    // Create a string array that contains all the processes you want to kill
+                    string[] processes = { "code", "chrome", "firefox", "node", "sublime_text", "devenv", "laragon" };
+                    // Create the directory for the processes.txt file
+                    System.IO.Directory.CreateDirectory(path);
+                    // Create a new StreamWriter object to write to the processes.txt file
+                    using StreamWriter file = new(path + "processes.txt");
+                    // Log to the console that we're writing to the processes.txt file
+                    UpdateStatus("Writing processes to file...");
+                    // Loop through all the processes in the processes array
+                    foreach (string process in processes)
+                    {
+                        // Log to the console what process we're writing to the file
+                        log("Writing " + process + " to file...");
+                        // Update the status label
+                        UpdateStatus("Writing " + process + " to file...");
+                        // Write the process name to the processes.txt file
+                        file.WriteLine(process);
+                    }
+                    // Log to the console that we've written to the processes.txt file
+                    log("Created processes file!");
                     // Update the status label
-                    UpdateStatus("Generating processes file...");
-                    try
-                    {
-                        // Create a string array that contains all the processes you want to kill
-                        string[] processes = { "code", "chrome", "firefox", "node", "sublime_text", "devenv", "laragon" };
-                        // Create the directory for the processes.txt file
-                        System.IO.Directory.CreateDirectory(path);
-                        // Create a new StreamWriter object to write to the processes.txt file
-                        using StreamWriter file = new(path + "processes.txt");
-                        // Log to the console that we're writing to the processes.txt file
-                        UpdateStatus("Writing processes to file...");
-                        // Loop through all the processes in the processes array
-                        foreach (string process in processes)
-                        {
-                            // Log to the console what process we're writing to the file
-                            log("Writing " + process + " to file...");
-                            // Update the status label
-                            UpdateStatus("Writing " + process + " to file...");
-                            // Write the process name to the processes.txt file
-                            file.WriteLine(process);
-                        }
-                        // Log to the console that we've written to the processes.txt file
-                        log("Created processes file!");
-                        // Update the status label
-                        UpdateStatus("Generated processes file!");
-                    }
-                    catch (Exception e)
-                    {
-                        // Log the error to the console
-                        log("Error: " + e, level: 2);
-                        // Update the status label
-                        UpdateStatus("Error: " + e);
-                    }
+                    UpdateStatus("Generated processes file!");
+                    // Open the folder
+                    OpenInExplorer(null, null);
+
                 }
-            });
+                catch (Exception e)
+                {
+                    // Log the error to the console
+                    log("Error: " + e, level: 2);
+                    // Update the status label
+                    UpdateStatus("Error: " + e);
+                }
+            }
         }
 
         /// <summary>
