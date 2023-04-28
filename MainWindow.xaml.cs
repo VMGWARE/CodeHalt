@@ -22,7 +22,7 @@ namespace CodeHalt
         public MainWindow()
         {
             // CodeHalt started
-            log("CodeHalt started!");
+            log("CodeHalt started!", level: 5);
             // If another instance of CodeHalt is already running...
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
@@ -76,7 +76,7 @@ namespace CodeHalt
         private bool AddToStartMenu()
         {
             // Check if the shortcut already exists
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs\CodeHalt.lnk"))
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk"))
             {
                 // If the shortcut exists, then log that it exists and return true
                 log("Shortcut already exists!");
@@ -87,7 +87,7 @@ namespace CodeHalt
             log("Shortcut doesn't exist, creating it...");
             object shStartMenu = (object)"StartMenu";
             WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shStartMenu) + @"\Programs\CodeHalt.lnk";
+            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shStartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk";
             IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
             shortcut.WorkingDirectory = Environment.CurrentDirectory;
             shortcut.Description = "CodeHalt - A simple process manager";
