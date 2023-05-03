@@ -8,6 +8,7 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 //using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Threading;
 using File = System.IO.File;
@@ -326,21 +327,21 @@ namespace CodeHalt
                     // Create a new StreamWriter object to write to the processes.txt file
                     using StreamWriter file = new(path + "processes.txt");
                     // Log to the console that we're writing to the processes.txt file
-                    UpdateStatus("Writing processes to file...");
+                    UpdateStatus("Adding processes to file...");
                     // Loop through all the processes in the processes array
                     foreach (string process in processes)
                     {
                         // Log to the console what process we're writing to the file
-                        log("Writing " + process + " to file...");
+                        log("Adding " + process + " to file...");
                         // Update the status label
-                        UpdateStatus("Writing " + process + " to file...");
+                        UpdateStatus("Adding " + process + " to file...");
                         // Write the process name to the processes.txt file
                         file.WriteLine(process);
                     }
                     // Log to the console that we've written to the processes.txt file
                     log("Created processes file!");
                     // Update the status label
-                    UpdateStatus("Generated processes file!");
+                    UpdateStatus("Created processes file!");
                     // Open the folder
                     OpenInExplorer(null, null);
 
@@ -372,8 +373,17 @@ namespace CodeHalt
                 // Clear list
                 ProcessList.Items.Clear();
 
+                // Set variables
+                string[] processes = null;
+
                 // Get processes from file
-                string[] processes = System.IO.File.ReadAllLines(path + "processes.txt");
+                try { processes = System.IO.File.ReadAllLines(path + "processes.txt"); }
+                catch (Exception ex)
+                {
+                    log("Failed to read processes.txt: " + ex.Message, level: 2);
+                    UpdateStatus("Failed to read processes.txt: Check the log for more details!");
+                    return;
+                }
 
                 Process[] runningProcesses = Process.GetProcesses();
 
@@ -696,6 +706,26 @@ namespace CodeHalt
                 }
                 Thread.Sleep(10000);
             }
+        }
+    
+        private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to close CodeHalt?", "Exit Setup", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.No)
+            {
+                return;
+            }
+            this.Close();
+        }
+
+        private void MinimizeWindow(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }

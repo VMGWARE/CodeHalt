@@ -3,127 +3,98 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:CodeHalt" Closed="Window_Closed" mc:Ignorable="d" Background="#36454F" Topmost="True" WindowStartupLocation="CenterScreen" Title="CodeHalt" ResizeMode="CanMinimize" Height="450" Width="800">
+    xmlns:local="clr-namespace:CodeHalt" Closed="Window_Closed" mc:Ignorable="d"
+    Background="#36454F" Topmost="True" WindowStartupLocation="CenterScreen" Title="CodeHalt"
+    ResizeMode="CanMinimize" Height="450" Width="800" WindowStyle="None">
     <Window.Resources>
-        <Style TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="White">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
-                                <Setter Property="Cursor" Value="Hand" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="ListBox">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBox">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="#46454F">
-                            <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                                <ItemsPresenter />
-                            </ScrollViewer>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="StatusBar">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-        </Style>
-        <Style TargetType="StatusBarItem">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="Black"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="White">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Cursor" Value="Hand" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="RadioButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1" CornerRadius="2" Background="White">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FFA500" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Cursor" Value="Hand" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
+
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ListBox x:Name="ProcessList" Grid.Column="0" Grid.Row="0" BorderBrush="Black" Foreground="#FFA500" Background="White" SelectionMode="Extended" BorderThickness="1" Margin="10,10,10,10" FontSize="14"/>
-        <Button Grid.Column="1" Grid.Row="0" Margin="10,10,10,0" Content="Scan Processes" Background="#FFA500" Click="ScanProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
-        <Button Grid.Column="1" Grid.Row="0" Margin="10,60,10,0" Content="Open In Explorer" VerticalAlignment="Top" Height="44" Click="OpenInExplorer" Background="#32CD32" FontSize="14" />
-        <Button Grid.Row="0" Margin="10,280,10,0" Content="Terminate Selected" Grid.Column="1" Click="TerminateSelectedProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
-        <Button Grid.Row="0" Margin="10,335,10,0" Content="Terminate All" Grid.Column="1" Click="StopProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
-        <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Background="LightGray">
-            <Grid Width="797">
+
+        <!-- Header -->
+        <Grid x:Name="Header" Grid.Row="0" Background="{StaticResource SecondaryBrush}"
+            Cursor="Hand" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="CodeHalt" FontSize="20" Margin="10"
+                VerticalAlignment="Center" Foreground="White" />
+            <Button Grid.Column="1" Content="🗕" FontSize="20" Margin="10"
+                VerticalAlignment="Center" Style="{StaticResource ButtonStyle}"
+                Click="MinimizeWindow" />
+            <Button Grid.Column="2" Content="✖" FontSize="20" Margin="10" VerticalAlignment="Center"
+                Style="{StaticResource ButtonStyle}" Click="CloseWindow" />
+        </Grid>
+
+        <!-- Welcome Section -->
+        <Grid Grid.Row="1" Background="{StaticResource PrimaryBrush}" Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListBox x:Name="ProcessList" Grid.Column="0" Grid.Row="0" BorderBrush="Black"
+                Foreground="#FFA500" Background="White" SelectionMode="Extended" BorderThickness="1"
+                Margin="10,10,10,10" FontSize="14" />
+            <Button Grid.Column="1" Grid.Row="0" Margin="10,10,10,0" Content="Scan Processes"
+                Background="#FFA500" Click="ScanProcesses" Height="44" VerticalAlignment="Top"
+                FontSize="14" />
+            <Button Grid.Column="1" Grid.Row="0" Margin="10,60,10,0" Content="Open In Explorer"
+                VerticalAlignment="Top" Height="44" Click="OpenInExplorer" Background="#32CD32"
+                FontSize="14" />
+            <Button Grid.Row="0" Margin="10,264,10,0" Content="Terminate Selected" Grid.Column="1"
+                Click="TerminateSelectedProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
+            <Button Grid.Row="0" Margin="10,313,10,0" Content="Terminate All" Grid.Column="1"
+                Click="StopProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
+
+            <GroupBox Header="Modes" Margin="10,109,10,170" Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <RadioButton x:Name="PassiveModeRadioButton" Content="Passive" Grid.Column="0"
+                        Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="PassiveMode"
+                        IsChecked="True" />
+                    <RadioButton x:Name="ActiveModeRadioButton" Content="Active" Grid.Column="1"
+                        Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="ActiveMode" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
+        <!-- Footer -->
+        <Grid x:Name="Footer" Grid.Row="2" Background="{StaticResource SecondaryBrush}">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="StatusLabel" Text="Ready!" Height="18" Grid.Column="0" Grid.ColumnSpan="1" Margin="0,0,0,0" />
+                <TextBlock x:Name="StatusLabel" Text="Ready!" FontSize="12" Margin="10" Grid.Column="0"
+                    Grid.ColumnSpan="1" Foreground="White" />
                 <!-- Add textblock for version using binding -->
-                <TextBlock x:Name="VersionLabel" Text="{Binding CurrentVersion, Mode=OneTime, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Height="18" Grid.Column="1" Grid.ColumnSpan="1" Margin="0,0,0,0" HorizontalAlignment="Center" />
+                <TextBlock x:Name="VersionLabel"
+                    Text="{Binding CurrentVersion, Mode=OneTime, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    FontSize="12" Margin="10" Grid.Column="1" Grid.ColumnSpan="1"
+                    HorizontalAlignment="Center" Foreground="White" />
             </Grid>
-        </StatusBar>
-        <GroupBox Header="Modes" Margin="10,109,10,205" Grid.Column="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <RadioButton x:Name="PassiveModeRadioButton" Content="Passive" Grid.Column="0" Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="PassiveMode" IsChecked="True" />
-                <RadioButton x:Name="ActiveModeRadioButton" Content="Active" Grid.Column="1" Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="ActiveMode" />
-            </Grid>
-        </GroupBox>
+        </Grid>
     </Grid>
 </Window>
