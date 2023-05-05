@@ -133,13 +133,7 @@ namespace CodeHalt
         {
             get
             {
-                // Check if the program is running in 32-bit mode
-                if (Environment.Is64BitProcess == false)
-                {
-                    // If the program is running in 32-bit mode, return the 32-bit version
-                    return "v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "-x86";
-                }
-                return "v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + "-x64";
+                return $"v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()} (Build {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build})";
             }
         }
 
