@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-//using Microsoft.Toolkit.Uwp.Notifications;
 using System.Windows.Threading;
 using File = System.IO.File;
 
