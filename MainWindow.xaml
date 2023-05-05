@@ -38,7 +38,7 @@
                 Style="{StaticResource ButtonStyle}" Click="CloseWindow" />
         </Grid>
 
-        <!-- Welcome Section -->
+        <!-- Content -->
         <Grid Grid.Row="1" Background="{StaticResource PrimaryBrush}" Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
