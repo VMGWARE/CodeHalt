@@ -700,7 +700,7 @@ namespace CodeHalt
                 Thread.Sleep(10000);
             }
         }
-    
+
         private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
