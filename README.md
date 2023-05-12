@@ -5,7 +5,7 @@
 
 # CodeHalt
 
- CodeHalt - A simple process manager
+CodeHalt - A simple process manager
 
 ## Description
 
@@ -15,14 +15,14 @@ CodeHalt is a simple process manager that allows you to manage processes that ar
 
 ### Dependencies
 
-* Windows 10
-* .NET 6.0
+- Windows 10
+- .NET 6.0
 
 ### Installing
 
-* Download the latest release from the releases page
-* Extract the zip file
-* Run CodeHalt.exe
+- Download the latest release from the releases page
+- Extract the zip file
+- Run CodeHalt.exe
 
 ### Executing program
 
@@ -30,28 +30,29 @@ Run CodeHalt.exe either as an administrator or as a normal user. If you run it a
 
 ### Features
 
-* Automatically creates a shortcut to CodeHalt.exe in the Programs folder
-* Will Generate a complete log of all processes that are terminated or other events that occur
-* The targeted processes are stored in a `processes.txt` and can be edited manually during runtime
-* Easy to use interface
+- Automatically creates a shortcut to CodeHalt.exe in the Programs folder
+- Will Generate a complete log of all processes that are terminated or other events that occur
+- The targeted processes are stored in a `processes.txt` and can be edited manually during runtime
+- Easy to use interface
 
 ### Interface
 
-* Scan Processes - List all processes that are marked to be managed by CodeHalt
-* Open In Explorer - Open the process/logs directory in explorer
-* Modes
-  * Passive - CodeHalt will not do anything to the process
-  * Active - CodeHalt will automatically halt the process if it is running
+- Scan Processes - List all processes that are marked to be managed by CodeHalt
+- Open In Explorer - Open the process/logs directory in explorer
+- Modes
 
-* Termintate Selected - Terminate the selected process
-* Terminate All - Terminate all processes that are marked to be managed by CodeHalt
+  - Passive - CodeHalt will not do anything to the process
+  - Active - CodeHalt will automatically halt the process if it is running
+
+- Terminate Selected - Terminate the selected process
+- Terminate All - Terminate all processes that are marked to be managed by CodeHalt
 
 ## TODO
 
-* [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
-* [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
-* [ ] Add backend support for the modes (Passive and Active)
-* [ ] Fix the bug where the program will crash if the target process is not found or if the process is already terminated
+- [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
+- [ ] Add a way to add processes to the list without having to edit the `processes.txt` file
+- [x] Add backend support for the modes (Passive and Active)
+- [ ] Fix the bug where the program will crash if the target process is not found or if the process is already terminated
 
 ## Help
 
@@ -63,12 +64,11 @@ Distributed under the `CC BY-NC-SA 4.0` License. See [LICENSE](LICENSE.md) for m
 
 ## Contributors
 
-<a href = "https://github.com/Codycody31/CodeHalt/graphs/contributors">
-<img src = "https://contrib.rocks/image?repo=Codycody31/CodeHalt"/>
-</a>
+[![Contributors][contributors-image]][contributors-url]
 
 [contributors-shield]: https://img.shields.io/github/contributors/Codycody31/CodeHalt.svg?style=for-the-badge
 [contributors-url]: https://github.com/Codycody31/CodeHalt/graphs/contributors
+[contributors-image]: https://contrib.rocks/image?repo=Codycody31/CodeHalt
 [forks-shield]: https://img.shields.io/github/forks/Codycody31/CodeHalt.svg?style=for-the-badge
 [forks-url]: https://github.com/Codycody31/CodeHalt/network
 [issues-shield]: https://img.shields.io/github/issues/Codycody31/CodeHalt.svg?style=for-the-badge
