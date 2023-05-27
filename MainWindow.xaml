@@ -62,7 +62,7 @@
             <Button Grid.Row="0" Margin="10,313,10,0" Content="Terminate All" Grid.Column="1"
                 Click="StopProcesses" Height="44" VerticalAlignment="Top" FontSize="14" />
 
-            <GroupBox Header="Modes" Margin="10,109,10,170" Grid.Column="1">
+            <GroupBox Header="Modes" Margin="10,109,10,170" Grid.Column="1" Foreground="White">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
