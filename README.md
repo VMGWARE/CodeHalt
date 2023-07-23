@@ -66,12 +66,12 @@ Distributed under the `CC BY-NC-SA 4.0` License. See [LICENSE](LICENSE.md) for m
 
 [![Contributors][contributors-image]][contributors-url]
 
-[contributors-shield]: https://img.shields.io/github/contributors/Codycody31/CodeHalt.svg?style=for-the-badge
-[contributors-url]: https://github.com/Codycody31/CodeHalt/graphs/contributors
-[contributors-image]: https://contrib.rocks/image?repo=Codycody31/CodeHalt
-[forks-shield]: https://img.shields.io/github/forks/Codycody31/CodeHalt.svg?style=for-the-badge
-[forks-url]: https://github.com/Codycody31/CodeHalt/network
-[issues-shield]: https://img.shields.io/github/issues/Codycody31/CodeHalt.svg?style=for-the-badge
-[issues-url]: https://github.com/Codycody31/CodeHalt/issues
+[contributors-shield]: https://img.shields.io/github/contributors/VMGWARE/CodeHalt.svg?style=for-the-badge
+[contributors-url]: https://github.com/VMGWARE/CodeHalt/graphs/contributors
+[contributors-image]: https://contrib.rocks/image?repo=VMGWARE/CodeHalt
+[forks-shield]: https://img.shields.io/github/forks/VMGWARE/CodeHalt.svg?style=for-the-badge
+[forks-url]: https://github.com/VMGWARE/CodeHalt/network
+[issues-shield]: https://img.shields.io/github/issues/VMGWARE/CodeHalt.svg?style=for-the-badge
+[issues-url]: https://github.com/VMGWARE/CodeHalt/issues
 [license-shield]: https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey.svg?style=for-the-badge
 [license-url]: https://creativecommons.org/licenses/by-nc-sa/4.0/
