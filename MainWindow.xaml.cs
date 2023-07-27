@@ -715,5 +715,11 @@ namespace CodeHalt
         {
             this.WindowState = WindowState.Minimized;
         }
+
+        private void OpenEditWindow(object sender, RoutedEventArgs e)
+        {
+            EditWindow editWin = new EditWindow();
+            editWin.ShowDialog();
+        }
     }
 }

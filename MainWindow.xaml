@@ -78,6 +78,10 @@
                         Grid.Row="1" Margin="5, 5, 5, 5" FontSize="14" Checked="ActiveMode" />
                 </Grid>
             </GroupBox>
+
+            <Button Content="Edit Processes" Click="OpenEditWindow"
+                Margin="10,215,10,0" Grid.Column="1" Height="44" VerticalAlignment="Top"
+                FontSize="14" />
         </Grid>
 
         <!-- Footer -->
@@ -87,7 +91,8 @@
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="StatusLabel" Text="Ready!" FontSize="12" Margin="10" Grid.Column="0"
+                <TextBlock x:Name="StatusLabel" Text="Ready!" FontSize="12" Margin="10"
+                    Grid.Column="0"
                     Grid.ColumnSpan="1" Foreground="White" />
                 <!-- Add textblock for version using binding -->
                 <TextBlock x:Name="VersionLabel"

@@ -1,0 +1,58 @@
+﻿<Window x:Class="CodeHalt.EditWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:CodeHalt"
+    mc:Ignorable="d"
+    Background="#36454F"
+    WindowStartupLocation="CenterOwner"
+    Title="Edit Processes" ResizeMode="CanMinimize" Height="450" Width="500" WindowStyle="None">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Background="{StaticResource SecondaryBrush}">
+            <TextBlock Text="Edit Processes" VerticalAlignment="Center"
+                Margin="10" FontSize="20" Foreground="White" />
+        </Grid>
+
+        <!-- Content -->
+        <ScrollViewer Grid.Row="1" Margin="10">
+
+            <TextBox x:Name="ProcessTextBox"
+                FontSize="16"
+                Foreground="#FFA500"
+                Background="#46454F"
+                BorderBrush="Black"
+                BorderThickness="1"
+                TextWrapping="Wrap"
+                ScrollViewer.CanContentScroll="True"
+                KeyDown="ProcessTextBox_KeyDown" />
+
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+            HorizontalAlignment="Right" Margin="0,10,10,0">
+            <Button Content="Cancel" Margin="10,10,10,10" FontSize="14" Height="30" Width="60"
+                Click="CancelButton_Click"
+            />
+            <Button Content="Save" Margin="10,10,10,10" FontSize="14" Height="30" Width="60"
+                Click="SaveButton_Click" />
+        </StackPanel>
+
+    </Grid>
+</Window>
