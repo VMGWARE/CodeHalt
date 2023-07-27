@@ -7,8 +7,9 @@ public class Log
     private string path;
 
     /// <summary>
-    /// Constructor for the Log class.
+    /// A class to log messages to a designated log file.
     /// </summary>
+    /// <param name="logFilePath">The path to the log file</param>
     public Log(string logFilePath = null)
     {
         if (logFilePath == null)
@@ -28,6 +29,10 @@ public class Log
     /// <summary>
     /// Private helper method to write the log message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
+    /// <param name="logLevel">The log level to add before the message</param>
     private void LogToFile(string message, bool newLine = true, bool timestamp = true, string logLevel = "")
     {
         if (File.Exists(path + "log.txt"))
@@ -63,6 +68,9 @@ public class Log
     /// <summary>
     /// Logs an informational message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Info(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[INFO] ");
@@ -71,6 +79,9 @@ public class Log
     /// <summary>
     /// Logs a warning message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Warning(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[WARNING] ");
@@ -79,6 +90,9 @@ public class Log
     /// <summary>
     /// Logs an error message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Error(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[ERROR] ");
@@ -87,6 +101,9 @@ public class Log
     /// <summary>
     /// Logs a debug message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Debug(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[DEBUG] ");
@@ -95,6 +112,9 @@ public class Log
     /// <summary>
     /// Logs a fatal message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Fatal(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[FATAL] ");
@@ -103,6 +123,9 @@ public class Log
     /// <summary>
     /// Logs a status message to the log file.
     /// </summary>
+    /// <param name="message">The message to log</param>
+    /// <param name="newLine">Whether or not to add a new line after the message</param>
+    /// <param name="timestamp">Whether or not to add a timestamp before the message</param>
     public void Status(string message, bool newLine = true, bool timestamp = true)
     {
         LogToFile(message, newLine, timestamp, "[STATUS] ");

@@ -17,17 +17,18 @@ namespace CodeHalt
     public partial class MainWindow : Window
     {
         string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CodeHalt\\";
+        Log Log = new Log(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\CodeHalt\\");
         int isAdministrator = 0;
         BackgroundWorker worker = new BackgroundWorker();
         public MainWindow()
         {
             // CodeHalt started
-            log("CodeHalt started!", level: 5);
+            Log.Status("CodeHalt started!");
             // If another instance of CodeHalt is already running...
             if (Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).Length > 1)
             {
                 // Log this error
-                log("Another instance of CodeHalt is already running!", true, true, 2);
+                Log.Error("Another instance of CodeHalt is already running!");
                 // Display an error message
                 MessageBox.Show("Another instance of CodeHalt is already running!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 // Exit the process
@@ -37,13 +38,13 @@ namespace CodeHalt
             if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 // Log this error
-                log("CodeHalt does not have admin rights!", true, true, 1);
+                Log.Warning("CodeHalt does not have admin rights!");
             }
             // If CodeHalt has admin rights...
             if (new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
             {
                 // Log that CodeHalt has admin rights
-                log("CodeHalt has admin rights!");
+                Log.Info("CodeHalt has admin rights!");
                 // Change the title of the window to include "(Administrator)"
                 this.Title = "CodeHalt  (Administrator)";
                 // Set isAdministrator to 1
@@ -63,7 +64,7 @@ namespace CodeHalt
                             // Add CodeHalt to the start menu
                             AddToStartMenu();
                             // Log that CodeHalt UI load is complete
-                            log("CodeHalt pre-UI load complete!", level: 5);
+                            Log.Status("CodeHalt pre-UI load complete!");
                         });
         }
 
@@ -79,12 +80,12 @@ namespace CodeHalt
             if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk"))
             {
                 // If the shortcut exists, then log that it exists and return true
-                log("Shortcut already exists!");
+                Log.Info("Shortcut already exists!");
                 return true;
             }
 
             // Log that the shortcut doesn't exist
-            log("Shortcut doesn't exist, creating it...");
+            Log.Info("Shortcut doesn't exist, creating it...");
             object shStartMenu = (object)"StartMenu";
             WshShell shell = new WshShell();
             string shortcutAddress = (string)shell.SpecialFolders.Item(ref shStartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk";
@@ -98,13 +99,13 @@ namespace CodeHalt
             if (File.Exists(shortcutAddress))
             {
                 // If the shortcut was created, then log that it was created and return true
-                log("Shortcut created!");
+                Log.Info("Shortcut created!");
                 return true;
             }
             else
             {
                 // If the shortcut wasn't created, then log that it failed and return false
-                log("Shortcut creation failed!", true, true, 2);
+                Log.Error("Shortcut creation failed!");
                 return false;
             }
         }
@@ -118,11 +119,11 @@ namespace CodeHalt
             if (!Directory.Exists(path))
             {
                 // If the folder doesn't exist, then log that it doesn't exist
-                log("Folder doesn't exist, creating it...");
+                Log.Info("Folder doesn't exist, creating it...");
                 // Create the folder
                 Directory.CreateDirectory(path);
                 // Log that the folder was created
-                log("Folder created!");
+                Log.Info("Folder created!");
             }
         }
 
@@ -145,7 +146,7 @@ namespace CodeHalt
         private void Window_Closed(object sender, EventArgs e)
         {
             // The user has closed the window.  We need to wait for the threads to finish before we can exit.
-            log("Waiting for threads to finish...");
+            Log.Info("Waiting for threads to finish...");
             UpdateStatus("Waiting for threads to finish...");
             try
             {
@@ -162,7 +163,7 @@ namespace CodeHalt
             }
             if (worker.IsBusy == true)
             {
-                log("Background worker is busy");
+                Log.Info("Background worker is busy");
             }
             int tries = 0;
             while (worker.IsBusy)
@@ -170,19 +171,19 @@ namespace CodeHalt
                 StopBackgroundWorker();
                 if (tries > 10)
                 {
-                    log("Background worker is still busy after 10 tries, exiting anyway");
+                    Log.Info("Background worker is still busy after 10 tries, exiting anyway");
                     break;
                 }
                 tries++;
             }
             if (worker.IsBusy == false)
             {
-                log("Background worker is not busy");
+                Log.Info("Background worker is not busy");
             }
             // Log that the threads have finished
             UpdateStatus("Exiting...");
-            log("Closing CodeHalt...");
-            log("CodeHalt closed!", level: 5);
+            Log.Info("Closing CodeHalt...");
+            Log.Status("CodeHalt closed!");
             Environment.Exit(0);
         }
 
@@ -193,92 +194,8 @@ namespace CodeHalt
         {
             log("Unhandled exception: " + e.Exception.Message, true, true, 2);
             log("Stack trace: " + e.Exception.StackTrace, true, true, 2);
-            log("CodeHalt crashed!", level: 2);
+            Log.Error("CodeHalt crashed!");
             Environment.Exit(0);
-        }
-
-        /// <summary>
-        /// It writes a message to a log file
-        /// </summary>
-        /// <param name="message">The message to log</param>
-        /// <param name="newLine">If true, adds a new line to the end of the message.</param>
-        /// <param name="timestamp">If true, it will add a timestamp to the log.</param>
-        /// <param name="level">0 = info, 1 = warning, 2 = error, 3 = debug, 4 = verbose, 5 = status</param>
-        private void log(string message, bool newLine = true, bool timestamp = true, int level = 0)
-        {
-            Action logToFile = new Action(() =>
-            {
-                if (path == null)
-                {
-                    path = Environment.CurrentDirectory + "\\";
-                }
-                if (path[path.Length - 1] != '\\')
-                {
-                    path += "\\";
-                }
-                if (File.Exists(path + "log.txt"))
-                {
-                    using StreamWriter file = new(path + "log.txt", true);
-                    if (timestamp)
-                    {
-                        file.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ");
-                    }
-                    switch (level)
-                    {
-                        case 0:
-                            file.Write("[INFO] ");
-                            break;
-                        case 1:
-                            file.Write("[WARNING] ");
-                            break;
-                        case 2:
-                            file.Write("[ERROR] ");
-                            break;
-                        case 3:
-                            file.Write("[DEBUG] ");
-                            break;
-                        case 4:
-                            file.Write("[FATAL] ");
-                            break;
-                        case 5:
-                            file.Write("[STATUS] ");
-                            break;
-                    }
-                    file.Write(message);
-                    if (newLine)
-                    {
-                        file.WriteLine();
-                    }
-                    file.Close();
-                }
-                else
-                {
-                    using StreamWriter file = new(path + "log.txt");
-                    if (timestamp)
-                    {
-                        file.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ");
-                    }
-                    switch (level)
-                    {
-                        case 0:
-                            file.Write("[INFO] ");
-                            break;
-                        case 1:
-                            file.Write("[WARNING] ");
-                            break;
-                        case 2:
-                            file.Write("[ERROR] ");
-                            break;
-                    }
-                    file.Write(message);
-                    if (newLine)
-                    {
-                        file.WriteLine();
-                    }
-                    file.Close();
-                }
-            });
-            this.Dispatcher.Invoke(logToFile, DispatcherPriority.Background);
         }
 
         /// <summary>
@@ -308,7 +225,7 @@ namespace CodeHalt
             if (!System.IO.File.Exists(path + "processes.txt"))
             {
                 // Log to the console what we're doing
-                log("Generating processes file...");
+                Log.Info("Generating processes file...");
                 // Update the status label
                 UpdateStatus("Generating processes file...");
                 try
@@ -325,14 +242,14 @@ namespace CodeHalt
                     foreach (string process in processes)
                     {
                         // Log to the console what process we're writing to the file
-                        log("Adding " + process + " to file...");
+                        Log.Info("Adding " + process + " to file...");
                         // Update the status label
                         UpdateStatus("Adding " + process + " to file...");
                         // Write the process name to the processes.txt file
                         file.WriteLine(process);
                     }
                     // Log to the console that we've written to the processes.txt file
-                    log("Created processes file!");
+                    Log.Info("Created processes file!");
                     // Update the status label
                     UpdateStatus("Created processes file!");
                     // Open the folder
@@ -342,7 +259,7 @@ namespace CodeHalt
                 catch (Exception e)
                 {
                     // Log the error to the console
-                    log("Error: " + e, level: 2);
+                    Log.Error("Error: " + e);
                     // Update the status label
                     UpdateStatus("Error: " + e);
                 }
@@ -360,7 +277,7 @@ namespace CodeHalt
             {
                 // Have it show the loading animation in the navbar where the search bar is
                 this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administrator)" : "") + " - Scanning...";
-                log("Scanning processes...");
+                Log.Info("Scanning processes...");
                 UpdateStatus("Scanning processes...");
 
                 // Clear list
@@ -373,7 +290,7 @@ namespace CodeHalt
                 try { processes = System.IO.File.ReadAllLines(path + "processes.txt"); }
                 catch (Exception ex)
                 {
-                    log("Failed to read processes.txt: " + ex.Message, level: 2);
+                    Log.Error("Failed to read processes.txt: " + ex.Message);
                     UpdateStatus("Failed to read processes.txt: Check the log for more details!");
                     return;
                 }
@@ -385,9 +302,9 @@ namespace CodeHalt
                     processes[i] = processes[i].ToLower();
                 }
 
-                log("Found " + runningProcesses.Length + " processes...");
+                Log.Info("Found " + runningProcesses.Length + " processes...");
                 UpdateStatus("Found " + runningProcesses.Length + " processes...");
-                log("Adding processes to list...");
+                Log.Info("Adding processes to list...");
                 UpdateStatus("Adding processes to list...");
                 int c = 0;
                 int total = runningProcesses.Length;
@@ -403,12 +320,12 @@ namespace CodeHalt
                 if (ProcessList.Items.Count == 0)
                 {
                     UpdateStatus("No processes found!");
-                    log("No processes found!", level: 1);
+                    Log.Warning("No processes found!");
                 }
                 else
                 {
                     UpdateStatus("Found " + ProcessList.Items.Count + " processes!");
-                    log("Found " + ProcessList.Items.Count + " processes!");
+                    Log.Info("Found " + ProcessList.Items.Count + " processes!");
                 }
                 this.Title = "CodeHalt" + (isAdministrator == 1 ? " (Administrator)" : "");
 
@@ -426,7 +343,7 @@ namespace CodeHalt
         {
             Dispatcher.Invoke(() =>
             {
-                log("Stopping processes...");
+                Log.Info("Stopping processes...");
                 UpdateStatus("Stopping processes...");
                 // Get processes from file
                 string[] processes = System.IO.File.ReadAllLines(path + "processes.txt");
@@ -438,7 +355,7 @@ namespace CodeHalt
                 }
                 Process[] runningProcesses = Process.GetProcesses();
 
-                log("Found " + runningProcesses.Length + " processes...");
+                Log.Info("Found " + runningProcesses.Length + " processes...");
                 UpdateStatus("Found " + runningProcesses.Length + " processes...");
                 int totalProcesses = runningProcesses.Length;
                 int currentProcess = 0;
@@ -446,25 +363,25 @@ namespace CodeHalt
                 string processName = "";
 
                 // Add processes to list
-                log("Stopping processes...");
+                Log.Info("Stopping processes...");
                 UpdateStatus("Stopping processes...");
                 foreach (Process runningProcess in runningProcesses)
                 {
                     if (processes.Contains(runningProcess.ProcessName.ToLower()))
                     {
-                        log("Stopping " + runningProcess.ProcessName + "...");
+                        Log.Info("Stopping " + runningProcess.ProcessName + "...");
                         UpdateStatus("Stopping " + runningProcess.ProcessName + "...");
                         processName = runningProcess.ProcessName + " (" + runningProcess.Id + ")" + " - " + runningProcess.MainWindowTitle;
                         try
                         {
                             runningProcess.Kill();
-                            log("Stopped '" + runningProcess.ProcessName + "'!");
+                            Log.Info("Stopped '" + runningProcess.ProcessName + "'!");
                             currentProcess++;
                         }
                         catch (Exception)
                         {
                             failedProcesses++;
-                            log("Failed to stop '" + runningProcess.ProcessName + "'!", level: 2);
+                            Log.Error("Failed to stop '" + runningProcess.ProcessName + "'!");
                             UpdateStatus("Failed to stop '" + runningProcess.ProcessName + "'!");
                         }
                         ProcessList.Items.Remove(processName);
@@ -472,12 +389,12 @@ namespace CodeHalt
                 }
                 if (failedProcesses > 0)
                 {
-                    log("Failed to stop " + failedProcesses + " processes!", level: 2);
+                    Log.Error("Failed to stop " + failedProcesses + " processes!");
                     UpdateStatus("Failed to stop " + failedProcesses + " processes!");
                 }
                 else
                 {
-                    log("Stopped processes!");
+                    Log.Info("Stopped processes!");
                     UpdateStatus("Stopped processes!");
                 }
             });
@@ -506,14 +423,14 @@ namespace CodeHalt
             {
                 try
                 {
-                    log("Opening path in explorer...");
+                    Log.Info("Opening path in explorer...");
                     Process.Start("explorer.exe", path);
-                    log("Opened path in explorer!");
+                    Log.Info("Opened path in explorer!");
                     UpdateStatus("Opened '" + path + "' in explorer!");
                 }
                 catch (Exception ex)
                 {
-                    log("Failed to open path in explorer: " + ex.Message, level: 2);
+                    Log.Error("Failed to open path in explorer: " + ex.Message);
                     UpdateStatus("Failed to open '" + path + "' in explorer!");
                 }
             });
@@ -546,11 +463,11 @@ namespace CodeHalt
                 var selectedProcesses = ProcessList.SelectedItems;
                 if (selectedProcesses.Count == 0)
                 {
-                    log("No processes selected!", level: 1);
+                    Log.Warning("No processes selected!");
                     UpdateStatus("No processes selected!");
                     return;
                 }
-                log("Terminating " + selectedProcesses.Count + " processes...");
+                Log.Info("Terminating " + selectedProcesses.Count + " processes...");
                 int terminated = 0;
                 foreach (var selectedProcess in selectedProcesses)
                 {
@@ -562,44 +479,39 @@ namespace CodeHalt
                     catch (FormatException ex)
                     {
                         UpdateStatus("Failed to parse process ID from string: " + ex.Message);
-                        log("Failed to parse process ID from string: " + ex.Message, level: 1);
+                        Log.Warning("Failed to parse process ID from string: " + ex.Message);
                         continue;
                     }
                     catch (Exception ex)
                     {
                         UpdateStatus("Failed to get process ID from string: " + ex.Message);
-                        log("Failed to get process ID from string: " + ex.Message, level: 1);
+                        Log.Warning("Failed to get process ID from string: " + ex.Message);
                         continue;
                     }
                     UpdateStatus("Stopping process " + processId + "...");
-                    log("Stopping process " + processId + "...");
+                    Log.Info("Stopping process " + processId + "...");
                     Process process = Process.GetProcessById(processId);
                     if (process == null)
                     {
                         UpdateStatus("Process " + processId + " does not exist!");
-                        log("Process " + processId + " does not exist!", level: 1);
+                        Log.Warning("Process " + processId + " does not exist!");
                         continue;
                     }
                     else
                     {
-                        try { process.Kill(); log("Stopped process " + processId + "!"); terminated++; }
-                        catch (Exception) { UpdateStatus("Failed to stop process " + processId + "!"); log("Failed to stop process " + processId + "!", level: 1); }
+                        try { process.Kill(); Log.Info("Stopped process " + processId + "!"); terminated++; }
+                        catch (Exception) { UpdateStatus("Failed to stop process " + processId + "!"); Log.Warning("Failed to stop process " + processId + "!"); }
                     }
                 }
                 if (terminated == 1)
                 {
                     UpdateStatus("Stopped " + terminated + " process!");
-                    log("Stopped " + terminated + " process!");
-                }
-                if (terminated == 0)
-                {
-                    UpdateStatus("Stopped " + terminated + " processes!");
-                    log("Stopped " + terminated + " processes!");
+                    Log.Info("Stopped " + terminated + " process!");
                 }
                 else
                 {
                     UpdateStatus("Stopped " + terminated + " processes!");
-                    log("Stopped " + terminated + " processes!");
+                    Log.Info("Stopped " + terminated + " processes!");
                 }
                 ProcessList.Items.Clear();
                 string[] processes = System.IO.File.ReadAllLines(path + "processes.txt");
@@ -612,7 +524,7 @@ namespace CodeHalt
                         ProcessList.Items.Add(runningProcess.ProcessName + " (" + runningProcess.Id + ")" + " - " + runningProcess.MainWindowTitle);
                     }
                 }
-                log("Updated process list!");
+                Log.Info("Updated process list!");
             });
             this.Dispatcher.Invoke(terminateProcessesSelected, DispatcherPriority.Background);
         }
@@ -624,10 +536,10 @@ namespace CodeHalt
         /// <param name="RoutedEventArgs">The event data.</param>
         private void ActiveMode(object sender, RoutedEventArgs e)
         {
-            log("Switched to active mode!");
+            Log.Info("Switched to active mode!");
             // Start the background worker
             StartBackgroundWorker();
-            log("Started background worker!");
+            Log.Info("Started background worker!");
         }
 
         /// <summary>
@@ -637,10 +549,10 @@ namespace CodeHalt
         /// <param name="RoutedEventArgs">The event data.</param>
         private void PassiveMode(object sender, RoutedEventArgs e)
         {
-            log("Switched to passive mode!");
+            Log.Info("Switched to passive mode!");
             // Stop the background worker
             StopBackgroundWorker();
-            log("Stopped background worker!");
+            Log.Info("Stopped background worker!");
         }
 
         /// <summary>
@@ -691,10 +603,10 @@ namespace CodeHalt
                 {
                     if (processes.Contains(runningProcess.ProcessName.ToLower()))
                     {
-                        log("Stopping process " + runningProcess.Id + "...");
+                        Log.Info("Stopping process " + runningProcess.Id + "...");
                         UpdateStatus("Stopping process " + runningProcess.Id + "...");
-                        try { runningProcess.Kill(); log("Stopped process " + runningProcess.Id + "!"); UpdateStatus("Stopped process " + runningProcess.Id + "!"); }
-                        catch (Exception) { UpdateStatus("Failed to stop process " + runningProcess.Id + "!"); log("Failed to stop process " + runningProcess.Id + "!", level: 1); }
+                        try { runningProcess.Kill(); Log.Info("Stopped process " + runningProcess.Id + "!"); UpdateStatus("Stopped process " + runningProcess.Id + "!"); }
+                        catch (Exception) { UpdateStatus("Failed to stop process " + runningProcess.Id + "!"); Log.Warning("Failed to stop process " + runningProcess.Id + "!"); }
                     }
                 }
                 Thread.Sleep(10000);
