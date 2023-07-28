@@ -158,7 +158,7 @@ namespace CodeHalt
                 foreach (Exception inner in ex.InnerExceptions)
                 {
                     // If we catch an exception, log it.
-                    log("Exception: " + inner.Message);
+                    Log.Error("Exception: " + inner.Message);
                 }
             }
             if (worker.IsBusy == true)
@@ -192,8 +192,8 @@ namespace CodeHalt
         /// </summary>
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            log("Unhandled exception: " + e.Exception.Message, true, true, 2);
-            log("Stack trace: " + e.Exception.StackTrace, true, true, 2);
+            Log.Error("Unhandled exception: " + e.Exception.Message);
+            Log.Error("Stack trace: " + e.Exception.StackTrace);
             Log.Error("CodeHalt crashed!");
             Environment.Exit(0);
         }
