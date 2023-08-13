@@ -35,35 +35,24 @@ public class Log
     /// <param name="logLevel">The log level to add before the message</param>
     private void LogToFile(string message, bool newLine = true, bool timestamp = true, string logLevel = "")
     {
-        if (File.Exists(path + "log.txt"))
+        string directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CodeHalt");
+        Directory.CreateDirectory(directoryPath); // Creates the directory if it doesn't exist
+
+        string logFilePath = Path.Combine(directoryPath, "log.txt");
+
+        using StreamWriter file = new(logFilePath, true);
+        if (timestamp)
         {
-            using StreamWriter file = new(path + "log.txt", true);
-            if (timestamp)
-            {
-                file.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ");
-            }
-            file.Write(logLevel);
-            file.Write(message);
-            if (newLine)
-            {
-                file.WriteLine();
-            }
+            file.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ");
         }
-        else
+        file.Write(logLevel);
+        file.Write(message);
+        if (newLine)
         {
-            using StreamWriter file = new(path + "log.txt");
-            if (timestamp)
-            {
-                file.Write(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " ");
-            }
-            file.Write(logLevel);
-            file.Write(message);
-            if (newLine)
-            {
-                file.WriteLine();
-            }
+            file.WriteLine();
         }
     }
+
 
     /// <summary>
     /// Logs an informational message to the log file.

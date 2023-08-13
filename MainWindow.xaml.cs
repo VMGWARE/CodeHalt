@@ -76,35 +76,32 @@ namespace CodeHalt
         /// </returns>
         private bool AddToStartMenu()
         {
-            // Check if the shortcut already exists
-            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk"))
+            string startMenuFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "CodeHalt");
+            Directory.CreateDirectory(startMenuFolderPath); // Creates the directory if it doesn't exist
+
+            string shortcutPath = Path.Combine(startMenuFolderPath, "CodeHalt.lnk");
+
+            if (File.Exists(shortcutPath))
             {
-                // If the shortcut exists, then log that it exists and return true
                 Log.Info("Shortcut already exists!");
                 return true;
             }
 
-            // Log that the shortcut doesn't exist
             Log.Info("Shortcut doesn't exist, creating it...");
-            object shStartMenu = (object)"StartMenu";
             WshShell shell = new WshShell();
-            string shortcutAddress = (string)shell.SpecialFolders.Item(ref shStartMenu) + @"\Programs\CodeHalt\CodeHalt.lnk";
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAddress);
+            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutPath);
             shortcut.WorkingDirectory = Environment.CurrentDirectory;
             shortcut.Description = "CodeHalt - A simple process manager";
-            shortcut.TargetPath = Environment.CurrentDirectory + "\\CodeHalt.exe";
+            shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, "CodeHalt.exe");
             shortcut.Save();
 
-            // Check if the shortcut was created
-            if (File.Exists(shortcutAddress))
+            if (File.Exists(shortcutPath))
             {
-                // If the shortcut was created, then log that it was created and return true
                 Log.Info("Shortcut created!");
                 return true;
             }
             else
             {
-                // If the shortcut wasn't created, then log that it failed and return false
                 Log.Error("Shortcut creation failed!");
                 return false;
             }
